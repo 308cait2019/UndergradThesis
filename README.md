@@ -12,6 +12,10 @@ relationships. Instead, we apply an avenue of approach via graph theory. We gath
 Erie’s western basin, allowing examination of the native white and yellow perch populations’
 analogous or cross-pernicious trends, finding they are due to diet and ecosystem health agents.
 
-Attached is sample data from 2014 or multi-year data, 
-Jupyter Notebooks for figures made, 
-and one R file for the graphs that determined prey threshold or cutoff points for analysis, or histograms.
+Attached is as follows. 
+1. Jupyter Notebooks where file names correspond to paper figures. 
+2. One R code file for the histograms or plots that determined the prey weight thresholds or analysis cutoff points.
+3. Data
+   - 2014 sample data on consumed Zebra and Quagga mussel shell and flesh dry weights and related biological data
+   - Multi-year Lake Erie phytoplankton data and related biological data
+   - Prey consumed by the White and Yellow perch species and related biological data
