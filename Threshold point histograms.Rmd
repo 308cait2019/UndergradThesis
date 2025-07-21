@@ -1,0 +1,169 @@
+```{r}
+library(tidyverse)
+```
+
+```{r}
+wc1 <- wc1A2014
+```
+
+```{r}
+wc1A2014 %>% select(species, prey, prey_weight_g) %>% 
+  filter(prey_weight_g >= 1) -> wc2
+```
+
+```{r}
+wc2 %>% select(prey_weight_g) %>%
+View()
+```
+
+
+```{r}
+wc1A2014 %>% select(species, prey, prey_weight_g) %>% 
+  filter(prey_weight_g <= 1) -> wc3
+```
+
+```{r}
+wc3 %>% select(prey_weight_g) %>%
+View()
+```
+
+```{r}
+write.csv(wc3, file = "wc3histogram.csv")
+```
+
+
+```{r}
+wc1 %>%
+  select(species, prey, prey_weight_g) %>%
+  ggplot(aes(x = prey_weight_g)) +
+  geom_histogram(position=position_dodge(), binwidth = 0.5, fill = 'white', aes(col=species)) +
+  ggtitle("Frequency of Weights at a Given Value")
+  ylim(0,35) 
+```
+
+#For plot
+```{r}
+wc1 <- wc1C2016
+```
+
+```{r}
+View(wc1)
+```
+
+#skip for individual years
+```{r}
+wc1 %>% select(-serial, -month, -fish_id, -lat, -lon) %>%
+  filter(year == "2014" | year == "2015" | year == "2016") %>%
+  arrange(year, species, prey, prey_weight_g) %>% na.omit() -> wc2
+```
+
+```{r}
+wc1 -> wc2
+```
+
+
+```{r}
+sum(wc2$prey_weight_g)
+```
+```{r}
+wc2 %>% filter(prey_weight_g < 1) -> threshold_1_df 
+# print(threshold_0.5_df)
+```
+
+```{r}
+percent_removed_1 <- (sum(threshold_1_df$prey_weight_g)/33.034)
+print(percent_removed_1)
+```
+
+```{r}
+library(pracma)
+percents = c()
+num_thresh = 61
+thresholds <- linspace(0,3,num_thresh)
+total = sum(wc1C2016$prey_weight_g)
+
+for (th in thresholds){
+  mini <- wc1C2016 %>% filter(prey_weight_g < th)
+  percent_removed <- sum(mini$prey_weight_g)/total
+  percents <- c(percents, percent_removed)
+}
+
+pt16 = data.frame(threshold = thresholds, percent_removed = percents, year = rep('2016',num_thresh))
+#plot(thresholds, percents)
+
+#par(new=T)
+
+percents = c()
+total15 = sum(wc1B2015$prey_weight_g)
+
+for (th in thresholds){
+  mini <- wc1B2015 %>% filter(prey_weight_g < th)
+  percent_removed15 <- sum(mini$prey_weight_g)/total15
+  percents <- c(percents, percent_removed15)
+}
+pt15 = data.frame(threshold = thresholds, percent_removed = percents, year = rep('2015',num_thresh))
+#plot(thresholds, percents, col = 'red')
+
+#par(new=T)
+
+percents = c()
+total14 = sum(wc1A2014$prey_weight_g)
+
+for (th in thresholds){
+  mini <- wc1A2014 %>% filter(prey_weight_g < th)
+  percent_removed14 <- sum(mini$prey_weight_g)/total14
+  percents <- c(percents, percent_removed14)
+}
+pt14 = data.frame(threshold = thresholds, percent_removed = percents, year = rep('2014',num_thresh))
+#plot(thresholds, percents, col = 'blue')
+pt <- rbind(pt14, pt15, pt16)
+ggplot(pt, aes(threshold, percent_removed, colour = year)) + 
+  geom_point() + 
+  xlim(0,3) + ylim(0, 1.3)+
+  theme(legend.position = 'bottom') +
+  geom_vline(xintercept =c(.7, .9, 1.5), colour = c('#0066CC', '#669966','#990000' )) +
+  geom_text(aes(x = 1.5, label = 'threshold = 1.5 g\n', y = .4
+                ), colour = '#990000',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .9, label = 'threshold = 0.9 g \n', y = .25), colour = '#669966',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .7, label = 'threshold = 0.7 g \n', y = 1.05), colour = '#0066CC',angle = 90, text = element_text(size = 9)) +
+  theme_light() +
+  labs(y = "percent of weight removed from diet", x = 'threshold weight in grams')
+```
+
+
+```{r}
+w16 <- wc1C2016 %>% mutate(year = paste("2016"))
+w14 <- wc1A2014 %>% mutate(year = paste("2014"))
+w15 <- wc1B2015 %>% mutate(year = paste("2015"))
+
+w <- rbind(w14, w15, w16)
+                           
+ggplot(w, aes(prey_weight_g, year, colour = year)) + 
+  geom_point() + 
+  xlim(0,2) +
+  theme(legend.position = 'bottom') +
+  geom_vline(xintercept =c(.7, .9, 1.5), colour = c('#0066CC', '#669966','#990000' )) +
+  geom_text(aes(x = 1.5, label = 'incidental prey 2014 \n', y = 2.), colour = '#990000',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = 1.5, label = '\n main prey 2014', y = 2.), colour = '#990000',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .9, label = 'incidental prey 2016 \n', y = 1.25), colour = '#669966',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .9, label = '\n main prey 2016', y = 1.25), colour = '#669966',angle = 90, text = element_text(size = 9))+
+  geom_text(aes(x = .7, label = 'incidental prey 2015 \n', y = 2.25), colour = '#0066CC',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .7, label = '\n main prey 2015', y = 2.25), colour = '#0066CC',angle = 90, text = element_text(size = 9)) +
+  theme_light() + 
+  labs(x = "prey weight in grams")
+```
+
+
+ggplot(pt, aes(threshold, percent_removed, colour = year)) + 
+  geom_point() + 
+  xlim(0,3) +
+  theme(legend.position = 'bottom') +
+  geom_vline(xintercept =c(.7, .9, 1.5), colour = c('#0066CC', '#669966','#990000' )) +
+  geom_text(aes(x = 1.5, label = 'incidental prey 2014 \n', y = 1.), colour = '#990000',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = 1.5, label = '\n main prey 2014', y = 1), colour = '#990000',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .9, label = 'incidental prey 2015 \n', y = 1.25), colour = '#669966',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .9, label = '\n main prey 2015', y = 1.25), colour = '#669966',angle = 90, text = element_text(size = 9))+
+  geom_text(aes(x = .7, label = 'incidental prey 2016 \n', y = .25), colour = '#0066CC',angle = 90, text = element_text(size = 9)) +
+  geom_text(aes(x = .7, label = '\n main prey 2016', y = .25), colour = '#0066CC',angle = 90, text = element_text(size = 9))
+
+
