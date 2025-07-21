@@ -11,3 +11,7 @@ avenue of investigation utilizes data collection and statistical analysis to det
 relationships. Instead, we apply an avenue of approach via graph theory. We gather data on Lake
 Erie’s western basin, allowing examination of the native white and yellow perch populations’
 analogous or cross-pernicious trends, finding they are due to diet and ecosystem health agents.
+
+Attached is sample data from 2014 or multi-year data, 
+Jupyter Notebooks for figures made, 
+and one R file for the graphs that determined prey threshold or cutoff points for analysis, or histograms.
